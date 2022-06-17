@@ -139,20 +139,20 @@ import Config from "../../misc/config";
 //   }
 // }
 
-export const AbsoluteDootDifferenceDisplay = (props: {
-  absoluteDootDifference: number;
+export const DootDifferenceDisplay = (props: {
+  dootDifference: number;
 }) => (
-  <div className="absolute-doot-difference-display">
-    <span className="bidi-arrow">⬍</span>
-    <span className="absolute-doot-difference-text">
-      {props.absoluteDootDifference}
+  <div className="doot-difference-display">
+    <span className="doot-difference-text">
+      <span className="bidi-arrow">⬍</span>
+      {props.dootDifference}
     </span>
   </div>
 );
 
 interface SubmissionSlideProps {
   src: string;
-  absoluteDootDifference: number;
+  dootDifference: number;
   onClick?: MouseEventHandler;
 }
 
@@ -167,8 +167,8 @@ export const SubmissionSlide: SubmissionSlideType = (
 
   return (
     <div className="slide">
-      <AbsoluteDootDifferenceDisplay
-        absoluteDootDifference={props.absoluteDootDifference}
+      <DootDifferenceDisplay
+        dootDifference={props.dootDifference}
       />
       <img src={props.src} onClick={props.onClick} />
     </div>
@@ -201,20 +201,44 @@ export const SubmissionCarousel: React.FunctionComponent<SubmissionCarouselProps
         props.maxItemCount - presetSlidesLength
       );
       for (const submission of submissionObjs) {
-        let imageB64;
-        if (!Config.api.storeSubmissionsLocally) {
-          imageB64 = await APIMiddleware.getSlackImageBase64(
-            submission.imageUrl
-          );
+        let imageSrc: string;
+        Logger.error(Config.api.storeSubmissionsLocally);
+        if (Config.api.storeSubmissionsLocally) {
+          if (!submission.apiPublicFileUrl) {
+            const errStr = `SubmissionFullView: props.apiPublicFileUrl required \
+            when storing submissions locally! Props provided: ${Logger.objectToPrettyStringSync(
+              props as Record<string, any>
+            )}`;
+            Logger.error(errStr);
+            throw new Error(errStr);
+          } else {
+            await Logger.warn(submission.apiPublicFileUrl)
+            imageSrc = APIMiddleware.formatSlackImageSrc(
+              submission.apiPublicFileUrl
+            );
+          }
+        } else {
+          if (!(submission.imageUrl && submission.imageMimetype)) {
+            const errStr = `SubmissionFullView: props.imageUrl && \
+            props.imageMimetype required when not storing submissions \
+            locally! Props provided: ${Logger.objectToPrettyStringSync(
+              props as Record<string, any>
+            )}`;
+            Logger.error(errStr);
+            throw new Error(errStr);
+          } else {
+            await Logger.warn(submission.imageMimetype)
+            imageSrc = APIMiddleware.formatSlackImageSrc(
+              await APIMiddleware.getSlackImageBase64(submission.imageUrl),
+              submission.imageMimetype
+            );
+          }
         }
-        const imageSrc = imageB64
-          ? APIMiddleware.formatSlackImageSrc(imageB64, submission.imageMimetype)
-          : APIMiddleware.formatSlackImageSrc(submission.apiPublicFileUrl);
 
         subSlides.push(
           <SubmissionSlide
             src={imageSrc}
-            absoluteDootDifference={submission.updoots - submission.downdoots}
+            dootDifference={submission.updoots - submission.downdoots}
           />
         );
       }

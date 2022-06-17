@@ -40,7 +40,7 @@ const Items = (props: { currentItems: MediaResponseStructure[] }) => {
             ? item.apiPublicFileUrl
             : item.imageUrl
         }
-        absoluteDootDifference={item.absoluteDootDifference}
+        dootDifference={item.updoots - item.downdoots}
         imageMimetype={item.imageMimetype}
         onClick={unsetOnClick.bind(null, item)}
       />

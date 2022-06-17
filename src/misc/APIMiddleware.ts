@@ -10,6 +10,7 @@ export enum SortedBy {
   Downdoots = "downdoots",
   UploaderID = "uploaderID",
   CSHUsername = "cshUsername",
+  DootDifference = "dootDifference",
   AbsoluteDootDifference = "absoluteDootDifference",
   Default = "updoots",
 }
@@ -21,40 +22,43 @@ export enum Direction {
 }
 
 export interface MediaResponseStructure {
-  uploaderID: string,
-  cshUsername: string,
-  apiPublicFileUrl: string,
-  imageUrl: string,
-  imageMimetype: string,
-  thumbnailUrl: string,
-  thumbnailMimetype: string,
-  updoots: number,
-  downdoots: number,
-  absoluteDootDifference: number
+  uploaderID: string;
+  cshUsername: string;
+  apiPublicFileUrl: string;
+  imageUrl: string;
+  imageMimetype: string;
+  thumbnailUrl: string;
+  thumbnailMimetype: string;
+  updoots: number;
+  downdoots: number;
+  dootDifference: number;
+  absoluteDootDifference: number;
 }
 
 export const downloadSlackImage = async (url: string): Promise<string> => {
   const res = await fetch(`${apiUrl}/getSlackFile?url=${url}`);
-  if(res.status >= 400) throw new Error(res.statusText);
+  if (res.status >= 400) throw new Error(res.statusText);
   const json = await res.json();
-  if(!json.data.publicFileUrl) throw new Error("Invalid response JSON");
+  if (!json.data.publicFileUrl) throw new Error("Invalid response JSON");
   return json.data.publicFileUrl;
-}
+};
 
 export const formatSlackImageSrc = (src: string, mimetype?: string) =>
   Config.api.storeSubmissionsLocally
-    ? `data:${mimetype};base64, ${src}`
-    : pathJoin(apiUrl, src)
-
+    ? pathJoin(apiUrl, src)
+    : `data:${mimetype};base64, ${src}`;
 
 // useLocalStorage generally only useful with small images (AKA thumbnails)
 // We manage this storage manually ourselves because we inline the base64 of the images to reduce server
 // load. This is likely absolutely dumb, as we have plenty of server space, so this is likely to be modified
 // in the future. By trying to be too smart, we are become dumb. Also browsers only have like 5 mb local storage
 // so this doesn't really help all that much, but hey, I tried here.
-export const getSlackImageBase64 = async (url: string, useLocalStorage?: boolean): Promise<string> => {
+export const getSlackImageBase64 = async (
+  url: string,
+  useLocalStorage?: boolean
+): Promise<string> => {
   let checkCache;
-  if(useLocalStorage) {
+  if (useLocalStorage) {
     checkCache = localStorage.getItem(url);
     Logger.log(`Check cache: ${checkCache?.substring(0, 20)}`);
     if (checkCache) return JSON.parse(checkCache) as string;
@@ -63,7 +67,7 @@ export const getSlackImageBase64 = async (url: string, useLocalStorage?: boolean
   if (res.status >= 400) throw new Error(res.statusText);
   const json = await res.json();
   if (json.data.base64Data) {
-    if(useLocalStorage){
+    if (useLocalStorage) {
       // Store in memory to avoid unnecessary fetches
       try {
         localStorage.setItem(url, JSON.stringify(json.data.base64Data));

@@ -7,42 +7,34 @@ import { SubmissionCarousel, SubmissionSlide } from "../SubmissionCarousel";
 import "./SubmissionFullView.scss";
 
 interface SubmissionFullViewProps {
-  imageUrl?: string;
+  imageUrl: string;
   imageMimetype?: string;
-  publicApiFileUrl?: string;
   onClick?: MouseEventHandler;
-  absoluteDootDifference: number;
+  dootDifference: number;
 }
 type SubmissionFullViewType = React.FunctionComponent<SubmissionFullViewProps>;
 const SubmissionFullView: SubmissionFullViewType = (
   props: SubmissionFullViewProps
 ) => {
-  if (Config.api.storeSubmissionsLocally) {
-    if (!props.publicApiFileUrl) {
-      Logger.error(`SubmissionFullView: props.publicApiFileUrl required \
-        when storing submissions locally! Props provided: ${Logger.objectToPrettyStringSync(
-          props as Record<string, any>
-        )}`);
-    }
-  } else {
-    if (!(props.imageUrl && props.imageMimetype)) {
-      Logger.error(`SubmissionFullView: props.imageUrl && \
+  if (
+    !Config.api.storeSubmissionsLocally && !props.imageMimetype
+    )
+   {
+    Logger.error(`SubmissionFullView: props.imageUrl && \
         props.imageMimetype required when not storing submissions \
         locally! Props provided: ${Logger.objectToPrettyStringSync(
           props as Record<string, any>
         )}`);
-    }
   }
   const [imageSrc, setImageSrc] = useState("");
   useEffect(() => {
-    (async () => {
-      return (await Config.api.storeSubmissionsLocally)
-        ? APIMiddleware.formatSlackImageSrc(props.publicApiFileUrl!)
-        : APIMiddleware.formatSlackImageSrc(
-            props.imageUrl!,
-            props.imageMimetype!
-          );
-    })().then((imageSrc) => {
+    (async () =>
+      Config.api.storeSubmissionsLocally
+        ? await APIMiddleware.formatSlackImageSrc(props.imageUrl)
+        : await APIMiddleware.formatSlackImageSrc(
+            props.imageUrl,
+            props.imageMimetype
+          ))().then((imageSrc) => {
       setImageSrc(imageSrc);
     });
   }, [imageSrc, props.imageUrl]);
@@ -60,7 +52,7 @@ const SubmissionFullView: SubmissionFullViewType = (
               ? imageSrc
               : `data:${props.imageMimetype};base64, ${imageSrc}`
           } // Should turn this to a function to formatB64ToSrc
-          absoluteDootDifference={props.absoluteDootDifference}
+          dootDifference={props.dootDifference}
         />
       </SubmissionCarousel>
     </Container>

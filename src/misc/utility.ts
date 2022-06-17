@@ -22,4 +22,4 @@ export const stringToPrimitive = (
 };
 
 export const pathJoin = (...parts: any[]) =>
-  parts.join("/").replace(new RegExp("/{1,}", "g"), "/");
+  parts.join("/").replace(new RegExp(`^/(?!//)([/{1,}]+)$`, "g"), "/");

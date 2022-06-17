@@ -1,22 +1,24 @@
 $csh-color-a: #b0197e;
 
-$slick-slider-margin-top: 10px;
-$slick-slider-background-color: lighten($csh-color-a, 20%);
-$slick-slider-border: 2px solid $csh-color-a;
-$slick-slider-border-radius: 5px;
-$slick-dots-background-color: darken($slick-slider-background-color, 20%);
-$slick-slider-button-active-color: white;
+$carousel-margin-top: 10px;
+$carousel-background-color: lighten($csh-color-a, 20%);
+$carousel-drop-shadow: drop-shadow(0px 0px 4px black);
+$carousel-border: 2px solid $csh-color-a;
+$carousel-border-radius: 5px;
+$carousel-button-active-color: white;
+$carousel-slide-border: 1px solid black;
+$slick-dots-background-color: darken($carousel-background-color, 20%);
+$slick-dots-border: $carousel-slide-border;
+$slick-dots-border-radius: $carousel-border-radius;
+
 
 .slick-slider {
-  border: $slick-slider-border;
-  border-radius: $slick-slider-border-radius;
-  background-color: $slick-slider-background-color;
-  margin-top: $slick-slider-margin-top;
+  margin-top: $carousel-margin-top;
+  border: $carousel-border;
+  border-radius: $carousel-border-radius;
+  background-color: $carousel-background-color;
+  filter: $carousel-drop-shadow;
   padding: 10px;
-}
-
-.slick-slider * {
-
 }
 
 .slick-dots {
@@ -25,6 +27,8 @@ $slick-slider-button-active-color: white;
   top: 0;
   left: 0;
   background-color: $slick-dots-background-color;
+  border: $slick-dots-border;
+  border-radius: $slick-dots-border-radius;
 }
 
 .slick-dots li button:before {
@@ -44,15 +48,15 @@ $slick-slider-button-active-color: white;
 
 
 .slick-active > button:before {
-  color: $slick-slider-button-active-color !important;
+  color: $carousel-button-active-color !important;
   opacity: 1 !important;
 }
 
 .slide {
   position: relative;
   background-color: black;
-  border: 3px solid;
-  border-radius: $slick-slider-border-radius;
+  border: $carousel-slide-border;
+  border-radius: $carousel-border-radius;
   height: 70vh;
 }
 
@@ -62,13 +66,14 @@ $slick-slider-button-active-color: white;
   height: 100%;
 }
 
-.absolute-doot-difference-display span {
+.doot-difference-display {
   background-color: white;
   border: 1px solid black;
   border-radius: 2px;
-}
-
-.absolute-doot-difference-display {
   position: absolute;
   font-size: 2rem;
+}
+
+.bidi-arrow {
+  all: unset;
 }
