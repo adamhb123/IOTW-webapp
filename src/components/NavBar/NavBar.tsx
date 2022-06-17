@@ -8,7 +8,6 @@ import {
   NavLink
 } from "reactstrap";
 import Profile from "./Profile";
-import CSHLogo from "./logo.svg";
 import "./NavBar.scss";
 
 export const NavBar: React.FunctionComponent = () => {
@@ -20,7 +19,7 @@ export const NavBar: React.FunctionComponent = () => {
 
   return (
     <Navbar id="navbar" dark expand="lg">
-      <NavLink to="/" id="brand" className={"navbar-brand"}>
+      <NavLink href="/" id="brand" className={"navbar-brand"}>
         <img id="csh-logo" src="/logo.svg"/>
         IOTW
       </NavLink>
@@ -28,13 +27,13 @@ export const NavBar: React.FunctionComponent = () => {
       <Collapse isOpen={isOpen} navbar>
         <Nav navbar>
           <NavItem>
-              <NavLink to="/" className={"nav-link"}>
+              <NavLink href="/" className={"nav-link"}>
                 Home
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink to="/submissions" className={"nav-link"}>
-                Submissions
+              <NavLink href="/my-submissions" className={"nav-link"}>
+                My Submissions
               </NavLink>
           </NavItem>
         </Nav>

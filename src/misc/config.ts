@@ -1,7 +1,7 @@
 import { stringToPrimitive, PrimitiveTypeString } from "./utility";
 
 const _parseEnvVar = (failureDefault: any, ...envVarNames: string[]) => {
-  const desiredPrimitive = <PrimitiveTypeString>typeof failureDefault;
+  const desiredPrimitive = (typeof failureDefault) as PrimitiveTypeString;
   for (const envVarName of envVarNames) {
     const envVar = process.env[envVarName];
     if (typeof envVar !== "undefined") {
@@ -36,8 +36,9 @@ const _AUTHORITY = _parseEnvVar(
 export const Config = {
   webapp: {},
   api: {
-    host: _parseEnvVar("localhost", "IOTW_API_HOST_OKD", "IOTW_API_HOST"),
-    port: _parseEnvVar("3001", "IOTW_API_PORT_OKD", "IOTW_API_PORT"),
+    host: _parseEnvVar("localhost", "REACT_APP_IOTW_API_HOST_OKD", "REACT_APP_IOTW_API_HOST"),
+    port: _parseEnvVar("3001", "REACT_APP_IOTW_API_PORT_OKD", "REACT_APP_IOTW_API_PORT"),
+    storeSubmissionsLocally: _parseEnvVar(true, "REACT_APP_IOTW_API_STORE_SUBMISSIONS_LOCALLY_OKD", "REACT_APP_IOTW_API_STORE_SUBMISSIONS_LOCALLY"),
   },
   sso: {
     client_id: _CLIENT_ID,

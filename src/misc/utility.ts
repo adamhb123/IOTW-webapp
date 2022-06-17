@@ -20,3 +20,6 @@ export const stringToPrimitive = (
     object: () => JSON.parse(string),
   }[desiredPrimitive]();
 };
+
+export const pathJoin = (...parts: any[]) =>
+  parts.join("/").replace(new RegExp("/{1,}", "g"), "/");

@@ -1,0 +1,74 @@
+$csh-color-a: #b0197e;
+
+$slick-slider-margin-top: 10px;
+$slick-slider-background-color: lighten($csh-color-a, 20%);
+$slick-slider-border: 2px solid $csh-color-a;
+$slick-slider-border-radius: 5px;
+$slick-dots-background-color: darken($slick-slider-background-color, 20%);
+$slick-slider-button-active-color: white;
+
+.slick-slider {
+  border: $slick-slider-border;
+  border-radius: $slick-slider-border-radius;
+  background-color: $slick-slider-background-color;
+  margin-top: $slick-slider-margin-top;
+  padding: 10px;
+}
+
+.slick-slider * {
+
+}
+
+.slick-dots {
+  position: relative;
+  padding: 12px;
+  top: 0;
+  left: 0;
+  background-color: $slick-dots-background-color;
+}
+
+.slick-dots li button:before {
+    font-size: 10px;
+}
+
+.slick-prev:before, .slick-next:before{
+    color: $csh-color-a;
+    font-size: 2rem;
+}
+
+.slick-prev {
+    position: absolute;
+    left: -37px !important;
+
+}
+
+
+.slick-active > button:before {
+  color: $slick-slider-button-active-color !important;
+  opacity: 1 !important;
+}
+
+.slide {
+  position: relative;
+  background-color: black;
+  border: 3px solid;
+  border-radius: $slick-slider-border-radius;
+  height: 70vh;
+}
+
+.slide > img {
+  display: block;
+  margin: auto;
+  height: 100%;
+}
+
+.absolute-doot-difference-display span {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 2px;
+}
+
+.absolute-doot-difference-display {
+  position: absolute;
+  font-size: 2rem;
+}
