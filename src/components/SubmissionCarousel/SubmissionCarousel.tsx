@@ -1,6 +1,7 @@
 import React, {
   MouseEventHandler,
   ReactElement,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -13,6 +14,8 @@ import APIMiddleware from "../../misc/APIMiddleware";
 import Logger from "easylogger-ts";
 import { Container } from "reactstrap";
 import Config from "../../misc/config";
+import SubmissionFullOverlay from "../SubmissionFullOverlay";
+import { isPropertySignature } from "typescript";
 
 // export class SubmissionCarouselItem {
 //   src: string;
@@ -139,9 +142,7 @@ import Config from "../../misc/config";
 //   }
 // }
 
-export const DootDifferenceDisplay = (props: {
-  dootDifference: number;
-}) => (
+export const DootDifferenceDisplay = (props: { dootDifference: number }) => (
   <div className="doot-difference-display">
     <span className="doot-difference-text">
       <span className="bidi-arrow">⬍</span>
@@ -164,13 +165,18 @@ export const SubmissionSlide: SubmissionSlideType = (
   //{props.caption ? (
   // ) : null}
   //<span className="slide-caption">{props.caption}</span>
-
+  const toggleShowFullOverlayOnClick = () => {
+    const dom = (document as any);
+    dom.setSubmissionFullOverlaySrc(props.src);
+    dom.setSubmissionFullOverlayVisible(!dom.submissionFullOverlayVisible);
+  };
   return (
     <div className="slide">
-      <DootDifferenceDisplay
-        dootDifference={props.dootDifference}
+      <DootDifferenceDisplay dootDifference={props.dootDifference} />
+      <img
+        src={props.src}
+        onClick={toggleShowFullOverlayOnClick}
       />
-      <img src={props.src} onClick={props.onClick} />
     </div>
   );
 };
@@ -205,21 +211,21 @@ export const SubmissionCarousel: React.FunctionComponent<SubmissionCarouselProps
         Logger.error(Config.api.storeSubmissionsLocally);
         if (Config.api.storeSubmissionsLocally) {
           if (!submission.apiPublicFileUrl) {
-            const errStr = `SubmissionFullView: props.apiPublicFileUrl required \
+            const errStr = `SubmissionCardCarousel: props.apiPublicFileUrl required \
             when storing submissions locally! Props provided: ${Logger.objectToPrettyStringSync(
               props as Record<string, any>
             )}`;
             Logger.error(errStr);
             throw new Error(errStr);
           } else {
-            await Logger.warn(submission.apiPublicFileUrl)
+            await Logger.warn(submission.apiPublicFileUrl);
             imageSrc = APIMiddleware.formatSlackImageSrc(
               submission.apiPublicFileUrl
             );
           }
         } else {
           if (!(submission.imageUrl && submission.imageMimetype)) {
-            const errStr = `SubmissionFullView: props.imageUrl && \
+            const errStr = `SubmissionCardCarousel: props.imageUrl && \
             props.imageMimetype required when not storing submissions \
             locally! Props provided: ${Logger.objectToPrettyStringSync(
               props as Record<string, any>
@@ -227,14 +233,13 @@ export const SubmissionCarousel: React.FunctionComponent<SubmissionCarouselProps
             Logger.error(errStr);
             throw new Error(errStr);
           } else {
-            await Logger.warn(submission.imageMimetype)
+            await Logger.warn(submission.imageMimetype);
             imageSrc = APIMiddleware.formatSlackImageSrc(
               await APIMiddleware.getSlackImageBase64(submission.imageUrl),
               submission.imageMimetype
             );
           }
         }
-
         subSlides.push(
           <SubmissionSlide
             src={imageSrc}
@@ -254,6 +259,7 @@ export const SubmissionCarousel: React.FunctionComponent<SubmissionCarouselProps
     dots: true,
     infinite: true,
     speed: 500,
+    slide: ".slide",
     slidesToShow: 1,
     slidesToScroll: 1,
   };
@@ -269,6 +275,7 @@ export const SubmissionCarousel: React.FunctionComponent<SubmissionCarouselProps
   );
   return (
     <Container id={props.id}>
+      <SubmissionFullOverlay src={""}/>
       <Slider {...settings}>{slides}</Slider>
     </Container>
   );

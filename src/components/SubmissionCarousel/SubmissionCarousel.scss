@@ -67,11 +67,14 @@ $slick-dots-border-radius: $carousel-border-radius;
 }
 
 .doot-difference-display {
+  width: 8%;
+  text-align: center;
   background-color: white;
   border: 1px solid black;
   border-radius: 2px;
   position: absolute;
   font-size: 2rem;
+  padding-right: 5px;
 }
 
 .bidi-arrow {

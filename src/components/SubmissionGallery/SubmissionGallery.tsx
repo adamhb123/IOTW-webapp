@@ -9,8 +9,8 @@ import APIMiddleware, {
 } from "../../misc/APIMiddleware";
 import InfoModal from "../InfoModal";
 import "./SubmissionGallery.scss";
-import SubmissionFullView from "../SubmissionFullView";
 import Config from "../../misc/config";
+import SubmissionFullOverlay from "../SubmissionFullOverlay";
 const ROW_COUNT = 5;
 const COLUMN_COUNT = 3; // Once max card amount has been reached (ROW_COUNT * COLUMN_COUNT), we will paginate the rest
 const SUBFETCH_INTERVAL_MS = 5000;
@@ -24,44 +24,33 @@ const SubFetchFailure = () => (
 );
 
 const Items = (props: { currentItems: MediaResponseStructure[] }) => {
-  const [
-    submissionFullView,
-    setSubmissionFullView,
-  ] = useState<ReactElement | null>(null);
-  const unsetOnClick = useCallback(
-    async (item: MediaResponseStructure) => setSubmissionFullView(null),
-    []
-  );
-  const setOnClick = useCallback(async (item: MediaResponseStructure) => {
-    setSubmissionFullView(
-      <SubmissionFullView
-        imageUrl={
-          Config.api.storeSubmissionsLocally
-            ? item.apiPublicFileUrl
-            : item.imageUrl
-        }
-        dootDifference={item.updoots - item.downdoots}
-        imageMimetype={item.imageMimetype}
-        onClick={unsetOnClick.bind(null, item)}
-      />
-    );
-  }, []);
+  const toggleShowFullOverlayOnClick = (src: string) => {
+    const dom = document as any;
+    dom.setSubmissionFullOverlaySrc(src);
+    dom.setSubmissionFullOverlayVisible(!dom.submissionFullOverlayVisible);
+  };
   return (
     <Row>
-      {submissionFullView}
       {props.currentItems &&
-        !submissionFullView &&
-        props.currentItems.map((item: MediaResponseStructure) => (
-          <SubmissionCard
-            key={item.thumbnailUrl}
-            author={item.cshUsername}
-            thumbnailUrl={item.thumbnailUrl}
-            thumbnailMimetype={item.thumbnailMimetype}
-            onClick={setOnClick.bind(null, item)}
-          >
-            Test f
-          </SubmissionCard>
-        ))}
+        props.currentItems.map((item: MediaResponseStructure) => {
+          const fullOverlaySrc = Config.api.storeSubmissionsLocally
+            ? APIMiddleware.formatSlackImageSrc(item.apiPublicFileUrl)
+            : APIMiddleware.formatSlackImageSrc(
+                item.imageUrl,
+                item.imageMimetype
+              );
+          return (
+            <SubmissionCard
+              key={item.thumbnailUrl}
+              author={item.cshUsername}
+              thumbnailUrl={item.thumbnailUrl}
+              thumbnailMimetype={item.thumbnailMimetype}
+              onClick={toggleShowFullOverlayOnClick.bind(null, fullOverlaySrc)}
+            >
+              Test f
+            </SubmissionCard>
+          );
+        })}
     </Row>
   );
 };
@@ -155,6 +144,7 @@ const SubmissionGallery: React.FunctionComponent<SubmissionGalleryProps> = (
   props: SubmissionGalleryProps
 ) => (
   <Container className="submission-display">
+    <SubmissionFullOverlay src={""} />
     <h1>{props.title}</h1>
     <PaginatedItems itemsPerPage={4} />
   </Container>

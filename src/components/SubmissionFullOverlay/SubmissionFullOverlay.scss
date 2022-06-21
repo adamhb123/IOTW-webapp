@@ -1,0 +1,55 @@
+@use "sass:math";
+
+$submission-full-overlay-background-color: #00000075;
+$submission-full-overlay-img-close-filter: invert(23%) sepia(86%)
+  saturate(7476%) hue-rotate(359deg) brightness(107%) contrast(124%) opacity(30%);
+$submission-full-overlay-img-height: 80%;
+$submission-full-overlay-img-top: math.div(
+  (100% - $submission-full-overlay-img-height),
+  2
+);
+.submission-full-overlay {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $submission-full-overlay-background-color;
+  visibility: hidden;
+}
+
+@keyframes close-img-highlight-hover {
+  from {
+    filter: none;
+  }
+  to {
+    filter: $submission-full-overlay-img-close-filter;
+  }
+}
+@keyframes close-img-highlight-unhover {
+  from {
+    filter: $submission-full-overlay-img-close-filter;
+  }
+  to {
+    filter: none;
+  }
+}
+
+.submission-full-overlay img {
+  position: relative;
+  display: block;
+  margin: auto;
+  width: auto;
+  height: $submission-full-overlay-img-height;
+  top: $submission-full-overlay-img-top;
+  animation: close-img-highlight-unhover;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.submission-full-overlay img:hover {
+  animation: close-img-highlight-hover;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
